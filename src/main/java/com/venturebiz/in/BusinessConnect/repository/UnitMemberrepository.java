@@ -9,12 +9,13 @@ import com.venturebiz.in.BusinessConnect.model.UnitMember;
 
 public interface UnitMemberrepository extends JpaRepository<UnitMember, Long> {
 
-    boolean existsByUserIdAndUnitId(Long userId, int unitId);
+    boolean existsByUserIdAndUnitId(Long userId, Long unitId);
 
-    Optional<UnitMember> findByUserIdAndUnitId(Long userId, int unitId);
+    Optional<UnitMember> findByUserIdAndUnitId(Long userId, Long unitId);
 
-    List<UnitMember> findByUnitId(int unitId);
-    
+    List<UnitMember> findByUnitId(Long unitId);
+
     boolean existsByUserId(Long userId);
-}
 
+    Optional<UnitMember> findByUserId(Long userId);
+}

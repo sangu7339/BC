@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UnitRepository extends JpaRepository<Units, Integer> {
+public interface UnitRepository extends JpaRepository<Units, Long> {
 
     // Fetch all units inside a community
     List<Units> findByCommunity(Community community);

@@ -30,9 +30,7 @@ public class UnitMemberController {
     private final UserRepository userRepository;
     private final CommunityRepository communityRepository;
 
-    /**
-     * Add User to Unit
-     */
+    // 1️⃣ ADD USER TO UNIT
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<Map<String, Object>> addUserToUnit(@RequestBody Addmember addmember) {
@@ -40,7 +38,7 @@ public class UnitMemberController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            int unitId = addmember.getUnitId();
+            Long unitId = addmember.getUnitId();  // FIXED
 
             User user = userRepository.findById(addmember.getUserId())
                     .orElseThrow(() -> new RuntimeException("User Not Found"));
@@ -48,9 +46,8 @@ public class UnitMemberController {
             Units unit = unitRepository.findById(unitId)
                     .orElseThrow(() -> new RuntimeException("Unit Not Found"));
 
-            // User must not exist in any unit
-            boolean alreadyMemberOfAnyUnit = unitMemberrepository.existsByUserId(addmember.getUserId());
-            if (alreadyMemberOfAnyUnit) {
+            boolean alreadyMember = unitMemberrepository.existsByUserId(addmember.getUserId());
+            if (alreadyMember) {
                 response.put("status", "error");
                 response.put("message", "User is already assigned to another unit");
                 return ResponseEntity.badRequest().body(response);
@@ -74,22 +71,18 @@ public class UnitMemberController {
         }
     }
 
-    /**
-     * Remove User From Unit (DELETE)
-     */
+    // 2️⃣ REMOVE USER FROM UNIT
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/remove")
     public ResponseEntity<Map<String, Object>> removeUserFromUnit(
             @RequestParam Long userId,
-            @RequestParam int unitId) {
+            @RequestParam Long unitId) {  // FIXED
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            UnitMember member = unitMemberrepository.findByUserIdAndUnitId(
-                    userId,
-                    unitId
-            ).orElseThrow(() -> new RuntimeException("User is not a member of this unit"));
+            UnitMember member = unitMemberrepository.findByUserIdAndUnitId(userId, unitId)
+                    .orElseThrow(() -> new RuntimeException("User is not a member of this unit"));
 
             unitMemberrepository.delete(member);
 
@@ -104,12 +97,10 @@ public class UnitMemberController {
         }
     }
 
-    /**
-     * Get All Members of a Unit
-     */
+    // 3️⃣ LIST MEMBERS OF A UNIT
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getUnitMembers(@RequestParam int unitId) {
+    public ResponseEntity<Map<String, Object>> getUnitMembers(@RequestParam Long unitId) { // FIXED
 
         Map<String, Object> response = new HashMap<>();
 
@@ -117,7 +108,7 @@ public class UnitMemberController {
             Units unit = unitRepository.findById(unitId)
                     .orElseThrow(() -> new RuntimeException("Unit Not Found"));
 
-            List<UnitMember> members = unitMemberrepository.findByUnitId(unitId);
+            List<UnitMember> members = unitMemberrepository.findByUnitId(unitId);  // FIXED
 
             response.put("status", "success");
             response.put("members", members);

@@ -7,5 +7,5 @@ import lombok.Data;
 @Builder
 public class Addmember {
 private Long userId;
-private int unitId;
+private Long unitId;
 }

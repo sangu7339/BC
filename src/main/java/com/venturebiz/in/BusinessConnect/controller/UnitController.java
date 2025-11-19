@@ -9,7 +9,6 @@ import com.venturebiz.in.BusinessConnect.repository.UnitRepository;
 import com.venturebiz.in.BusinessConnect.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ public class UnitController {
         return map;
     }
 
+    // 1️⃣ CREATE UNIT
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public ResponseEntity<?> createUnit(@RequestBody UnitCreateRequest request) {
@@ -63,11 +63,11 @@ public class UnitController {
                     .unitName(request.getUnitName().trim())
                     .community(community)
                     .build();
- 
+
             unitRepository.save(unit);
 
             return ResponseEntity.ok(
-                    response(true, "Unit created successfully", null)
+                    response(true, "Unit created successfully", unit)
             );
 
         } catch (Exception e) {
@@ -75,6 +75,7 @@ public class UnitController {
         }
     }
 
+    // 2️⃣ GET UNITS BY COMMUNITY
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-community/{communityId}")
     public ResponseEntity<?> getUnitsByCommunity(@PathVariable int communityId) {
@@ -97,9 +98,10 @@ public class UnitController {
         );
     }
 
+    // 3️⃣ DELETE UNIT
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUnit(@PathVariable int id) {
+    public ResponseEntity<?> deleteUnit(@PathVariable Long id) {
         try {
             Units unit = unitRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Unit not found"));
@@ -123,6 +125,7 @@ public class UnitController {
         }
     }
 
+    // 4️⃣ GET ALL COMMUNITIES
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/community-list")
     public ResponseEntity<?> getAllCommunities() {
@@ -135,5 +138,3 @@ public class UnitController {
         }
     }
 }
-
-

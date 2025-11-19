@@ -2,6 +2,8 @@ package com.venturebiz.in.BusinessConnect.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +23,8 @@ public class Units {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
     private Community community;
+    
+    @JsonIgnore
     @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL)
     private List<UnitMember> members;
 

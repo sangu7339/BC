@@ -27,11 +27,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    // ------------------------------------------------------------------
-    // INTERNAL SERVICE LOGIC INSIDE SAME CLASS
-    // ------------------------------------------------------------------
-
-    // Generate unique referral code
+  
     private String generateReferralCode() {
         String code;
         do {

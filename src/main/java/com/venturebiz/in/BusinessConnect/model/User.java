@@ -2,6 +2,7 @@ package com.venturebiz.in.BusinessConnect.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,4 +63,9 @@ public class User {
     public void onCreate() {
         this.registeredAt = LocalDateTime.now();
     }
+    
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UnitMember> units;
+
 }

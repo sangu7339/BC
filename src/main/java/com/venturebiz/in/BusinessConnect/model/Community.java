@@ -1,6 +1,7 @@
 package com.venturebiz.in.BusinessConnect.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -28,7 +29,8 @@ public class Community {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User admin;
 
-
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Units> units;
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();

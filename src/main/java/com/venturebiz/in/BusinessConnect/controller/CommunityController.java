@@ -16,7 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:5174")
+//@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/admin/community")
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class CommunityController {
     @PostMapping("/create")
     public ResponseEntity<?> createCommunity(@Valid @RequestBody CommunityRequest request) {
         try {
-            // DUPLICATE CHECK
+
             if (communityRepository.existsByCommunityNameIgnoreCase(request.getCommunityName())) {
                 return ResponseEntity.badRequest().body(
                         ResponseBuilder.error("Community already exists")

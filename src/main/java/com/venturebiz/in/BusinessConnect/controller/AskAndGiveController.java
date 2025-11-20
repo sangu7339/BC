@@ -51,43 +51,89 @@ public class AskAndGiveController {
 
         return ResponseEntity.ok(res("Ask created successfully", ask));
     }
+//
+//    // 2️⃣ RESPOND TO ASK
+//    @PostMapping("/respond/{askId}")
+//    public ResponseEntity<?> respond(@PathVariable Long askId,
+//                                     @RequestParam Status status) {
+//
+//        User responder = userRepo.findByEmailAddress(
+//                SecurityContextHolder.getContext().getAuthentication().getName())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        AskAndGive ask = askRepo.findById(askId)
+//                .orElseThrow(() -> new RuntimeException("Ask not found"));
+//        
+//
+//        UnitMember creatorUnit = unitMemberRepo.findByUserId(ask.getCreatedBy().getId())
+//                .orElseThrow(() -> new RuntimeException("Creator not in unit"));
+//
+//        UnitMember responderUnit = unitMemberRepo.findByUserId(responder.getId())
+//                .orElseThrow(() -> new RuntimeException("Responder not in unit"));
+//
+//        if (!creatorUnit.getUnit().getId().equals(responderUnit.getUnit().getId()))
+//            return ResponseEntity.badRequest()
+//                    .body(res("You cannot respond to another unit’s ask", null));
+//        
+//        
+//        if (ask.getStatus() != Status.ACCEPT)
+//            return ResponseEntity.badRequest().body(
+//                    res("once you response you cannot change once again", null));
+//
+//        
+//        ask.setStatus(status);
+//        ask.setRespondedBy(responder);
+//        askRepo.save(ask);
+//
+//        return ResponseEntity.ok(res("Response updated", ask));
+//    }
 
-    // 2️⃣ RESPOND TO ASK
+    
+    
     @PostMapping("/respond/{askId}")
-    public ResponseEntity<?> respond(@PathVariable Long askId,
-                                     @RequestParam Status status) {
+    public ResponseEntity<?> respond(
+            @PathVariable Long askId,
+            @RequestParam Status status) {
 
         User responder = userRepo.findByEmailAddress(
-                SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        ).orElseThrow(() -> new RuntimeException("User not found"));
 
         AskAndGive ask = askRepo.findById(askId)
                 .orElseThrow(() -> new RuntimeException("Ask not found"));
-        
 
+        // RULE 1: Only pending ask can be responded
+        if (ask.getStatus() != Status.PENDING) {
+            return ResponseEntity.badRequest().body(
+                    res("This ASK already has a response. Only one response allowed per ASK.", null)
+            );
+        }
+
+        // RULE 2: Both must be in the same unit
         UnitMember creatorUnit = unitMemberRepo.findByUserId(ask.getCreatedBy().getId())
                 .orElseThrow(() -> new RuntimeException("Creator not in unit"));
 
         UnitMember responderUnit = unitMemberRepo.findByUserId(responder.getId())
                 .orElseThrow(() -> new RuntimeException("Responder not in unit"));
 
-        if (!creatorUnit.getUnit().getId().equals(responderUnit.getUnit().getId()))
-            return ResponseEntity.badRequest()
-                    .body(res("You cannot respond to another unit’s ask", null));
-        
-        
-        if (ask.getStatus() != Status.ACCEPT)
+        if (!creatorUnit.getUnit().getId().equals(responderUnit.getUnit().getId())) {
             return ResponseEntity.badRequest().body(
-                    res("once you response you cannot change once again", null));
+                    res("You cannot respond to an ASK from another unit.", null)
+            );
+        }
 
-        
-        ask.setStatus(status);
+        // RULE 3: Allow exact one response per ASK
         ask.setRespondedBy(responder);
+        ask.setStatus(status);
         askRepo.save(ask);
 
-        return ResponseEntity.ok(res("Response updated", ask));
+        return ResponseEntity.ok(
+                res("Response successfully submitted.", ask)
+        );
     }
 
+    
+    
     // 3️⃣ DELETE ASK (only pending)
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/delete/{askId}")

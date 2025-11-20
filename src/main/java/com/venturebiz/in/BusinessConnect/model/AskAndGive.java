@@ -1,9 +1,10 @@
 package com.venturebiz.in.BusinessConnect.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -16,7 +17,6 @@ public class AskAndGive {
     private Long id;
 
     private String ask;
-
     private String give;
 
     @Enumerated(EnumType.STRING)
@@ -24,7 +24,7 @@ public class AskAndGive {
 
     private LocalDateTime time;
 
-    // USER WHO CREATED THE ASK
+    // USER WHO CREATED ASK
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
@@ -33,6 +33,10 @@ public class AskAndGive {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responded_by")
     private User respondedBy;
+
+    // RELATIONSHIP WITH BUSINESS
+    @OneToMany(mappedBy = "ask", cascade = CascadeType.ALL)
+    private List<Business> businesses;
 
     public enum Status {
         PENDING,
